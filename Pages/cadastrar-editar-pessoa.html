@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cadastro de Pessoa</title>
+    <!-- Adiciona o Bootstrap -->
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="../Styles/cadastrar-editar-pessoa.css" />
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script
+      src="https://kit.fontawesome.com/1e2e684622.js"
+      crossorigin="anonymous"
+    ></script>
+    <script type="module" src="../Scripts/cadastrar-editar-pessoa.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Cadastro de Pessoa</h1>
+      <form>
+        <div class="form-group">
+          <label for="nome">Nome</label>
+          <input
+            type="text"
+            class="form-control nome-pessoa"
+            id="nome"
+            name="nome"
+          />
+        </div>
+        <div class="form-group" id="contatos">
+          <label for="contato">Contatos</label>
+          <div class="d-flex col-md-6">
+            <select
+              class="form-select col-md-4 select-tipo-contato"
+              aria-label="Tipo de contato"
+            ></select>
+            <input
+              type="text"
+              class="form-control col-md-6 valor-contato"
+              placeholder="Valor do contato"
+            />
+            <button
+              class="btn btn-primary btn-cadastrar-contato col-md-2"
+              type="button"
+            >
+              Adicionar
+            </button>
+          </div>
+          <table id="lista-contatos" class="table col-md-6"></table>
+        </div>
+        <button type="button" class="btn btn-success mt-2 btn-salvar">
+          Salvar
+        </button>
+      </form>
+    </div>
+  </body>
+</html>
