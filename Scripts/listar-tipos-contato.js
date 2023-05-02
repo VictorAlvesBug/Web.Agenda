@@ -47,7 +47,7 @@ async function listarTiposContato() {
     const tiposContato = await createApi('tiposcontato').get();
     renderizarTiposContato(tiposContato.data);
   } catch (error) {
-    await exibirMensagemErro(error);
+    await exibirMensagemErro(error.message);
   }
 }
 
@@ -91,9 +91,7 @@ async function excluirTipoContato(codigoTipoContato) {
     await exibirMensagemSucesso('Tipo de contato excluído com sucesso');
     location.reload();
     return;
-  } catch (e) {
-    return await exibirMensagemErro(
-      'Ocorreu um erro ao excluir tipo de contato'
-    );
+  } catch (error) {
+    return await exibirMensagemErro(error.message);
   }
 }

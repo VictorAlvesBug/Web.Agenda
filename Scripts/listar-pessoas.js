@@ -81,7 +81,7 @@ async function listarPessoas() {
     const pessoas = await createApi('pessoas').get();
     renderizarPessoas(pessoas.data);
   } catch (error) {
-    await exibirMensagemErro(error);
+    await exibirMensagemErro(error.message);
   }
 }
 
@@ -119,8 +119,7 @@ async function excluirPessoa(codigoPessoa) {
     await exibirMensagemSucesso('Pessoa excluída com sucesso');
     location.reload();
     return;
-  } catch (e) {
-    console.error(e);
-    return await exibirMensagemErro('Ocorreu um erro ao excluir pessoa');
+  } catch (error) {
+    return await exibirMensagemErro(error.message);
   }
 }

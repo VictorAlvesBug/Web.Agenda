@@ -52,7 +52,10 @@ export default function createApi(recurso) {
       method: 'DELETE',
     });
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(
+        (await response.json())?.erro ??
+          `HTTP error! status: ${response.status}`
+      );
     }
   };
 
