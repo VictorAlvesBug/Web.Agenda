@@ -1,83 +1,138 @@
 import createApi from './Utils/api.js';
 import { formatar } from './Utils/formatador.js';
+import {
+  exibirMensagemSucesso,
+  exibirMensagemErro,
+  exibirMensagemInformacao,
+} from './Utils/alert-flutuante.js';
+import createLoading from './Utils/loading.js';
 
+const elementosModoCadastrar = document.querySelectorAll('.modo-cadastrar');
+const elementosModoEditar = document.querySelectorAll('.modo-editar');
+
+const inputNomePessoa = document.querySelector('.nome-pessoa');
+const selectTipoContato = document.querySelector('.select-tipo-contato');
+const inputValorContato = document.querySelector('.valor-contato');
+const btnCadastrarContato = document.querySelector('.btn-cadastrar-contato');
+const tbodyListaContatos = document.querySelector('.lista-contatos');
+
+const btnCadastrar = document.querySelector('.btn-cadastrar');
+const btnEditar = document.querySelector('.btn-editar');
+
+let codigoPessoa = 0;
 let contatos = [];
+let contatoEditando;
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const selectTipoContato = document.querySelector('.select-tipo-contato');
+  await renderizarListaTipoContato();
 
-  const { data: tiposContato } = await createApi('tiposcontato').get();
-
-  selectTipoContato.innerHTML = '';
-
-  const option = document.createElement('option');
-  option.setAttribute('value', 0);
-  option.innerText = 'Selecione...';
-  selectTipoContato.appendChild(option);
-
-  tiposContato.forEach((contato) => {
-    const option = document.createElement('option');
-    option.setAttribute('value', contato.codigo);
-    option.setAttribute('nome-tipo-contato', contato.nome);
-    option.setAttribute('regex-validacao', contato.regexValidacao);
-    option.innerText = contato.nome;
-    selectTipoContato.appendChild(option);
-  });
-
-  await popularCamposCasoSejaEdicao();
+  await personalizarModoFormulario();
 });
 
-async function popularCamposCasoSejaEdicao(){
-const queryString = window.location.search;
-const urlParams = new URLSearchParams(queryString);
-const codigoPessoa = urlParams.get('codigoPessoa');
+async function renderizarListaTipoContato() {
+  const { data: tiposContato } = await createApi('tiposcontato').get();
+  // Informando que nenhum registro foi encontrado
+  if (tiposContato.length === 0) {
+    selectTipoContato.innerHTML =
+      '<option value="0">Nenhum registro foi encontrado</option>';
+    return;
+  }
 
-if(codigoPessoa){
-    const pessoa = await createApi('pessoas').get(codigoPessoa);
+  // Limpando select
+  selectTipoContato.innerHTML = '';
 
-    if(pessoa.data){
-        document.querySelector('.nome-pessoa').value = pessoa.data.nome;
-        contatos = pessoa.data.listaContatos.map(contato => {
-            return {
-                codigoTipoContato: contato.codigoTipoContato,
-                valor: contato.valor,
-                regexValidacao: contato.tipoContato.regexValidacao,
-                nomeTipoContato: contato.tipoContato.nome
-            };
-        });
-        renderizarListaContatos();
-        return;
-    }
-}
-}
+  // Adicionando "Selecione..."
+  const option = '<option value="0">Selecione...</option>';
+  selectTipoContato.innerHTML += option;
 
-document
-  .querySelector('.btn-cadastrar-contato')
-  .addEventListener('click', () => {
-    const contato = {};
-    const optionTipoContato = document.querySelector(
-      '.select-tipo-contato>option:checked'
-    );
-
-    contato.codigoTipoContato = optionTipoContato.value;
-    contato.nomeTipoContato =
-      optionTipoContato.getAttribute('nome-tipo-contato');
-    contato.regexValidacao = optionTipoContato.getAttribute('regex-validacao');
-    contato.valor = document.querySelector('.valor-contato').value;
-
-    const mensagemErro = validarContato(contato);
-
-    if (mensagemErro) {
-      return alert(mensagemErro);
-    }
-
-    contatos.push(contato);
-
-    document.querySelector('.select-tipo-contato').value = 0;
-    document.querySelector('.valor-contato').value = '';
-
-    renderizarListaContatos();
+  // Adicionando cada tipo de contato
+  tiposContato.forEach((contato) => {
+    const option = `<option 
+          value="${contato.codigo}" 
+          nome-tipo-contato="${contato.nome}" 
+          regex-validacao="${contato.regexValidacao ?? ''}">
+        ${contato.nome}
+      </option>`;
+    selectTipoContato.innerHTML += option;
   });
+}
+
+async function personalizarModoFormulario() {
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  codigoPessoa = urlParams.get('codigoPessoa');
+
+  // Modo Cadastrar
+  if (!codigoPessoa) {
+    return habilitarModoCadastrar();
+  }
+
+  // Modo Editar
+  habilitarModoEditar();
+
+  const pessoa = await createApi('pessoas').get(codigoPessoa);
+
+  if (!pessoa.data) {
+    return await exibirMensagemErro(
+      pessoa.erro ?? 'Ocorreu um erro ao retornar pessoa'
+    );
+  }
+
+  inputNomePessoa.value = pessoa.data.nome;
+  contatos = pessoa.data.listaContatos.map(
+    ({ codigoTipoContato, valor, tipoContato }) => {
+      return {
+        codigoTipoContato: codigoTipoContato,
+        valor: valor,
+        regexValidacao: tipoContato.regexValidacao,
+        nomeTipoContato: tipoContato.nome,
+      };
+    }
+  );
+  renderizarListaContatos();
+  return;
+}
+
+function habilitarModoCadastrar() {
+  elementosModoCadastrar.forEach((el) => el.classList.add('visivel'));
+  elementosModoEditar.forEach((el) => el.classList.remove('visivel'));
+}
+
+function habilitarModoEditar() {
+  elementosModoCadastrar.forEach((el) => el.classList.remove('visivel'));
+  elementosModoEditar.forEach((el) => el.classList.add('visivel'));
+}
+
+btnCadastrarContato.addEventListener('click', async ({ target }) => {
+  const loadingBotao = createLoading(target);
+  loadingBotao.habilitar('Cadastrando...');
+
+  const contato = {};
+  const optionTipoContato = selectTipoContato.querySelector('option:checked');
+
+  contato.codigoTipoContato = optionTipoContato.value;
+  contato.nomeTipoContato = optionTipoContato.getAttribute('nome-tipo-contato');
+  contato.regexValidacao = optionTipoContato.getAttribute('regex-validacao');
+  contato.valor = inputValorContato.value.trim();
+
+  const mensagemErro = validarContato(contato);
+
+  if (mensagemErro) {
+    loadingBotao.desabilitar();
+    return await exibirMensagemErro(mensagemErro);
+  }
+
+  exibirMensagemSucesso('Contato adicionado com sucesso');
+
+  contatos.push(contato);
+
+  contatoEditando = null;
+  selectTipoContato.value = 0;
+  inputValorContato.value = '';
+
+  renderizarListaContatos();
+  loadingBotao.desabilitar();
+});
 
 function validarContato({
   codigoTipoContato,
@@ -105,59 +160,190 @@ function validarContato({
 }
 
 function renderizarListaContatos() {
-  const tableListaContatos = document.querySelector('#lista-contatos');
-
-  tableListaContatos.innerHTML = '';
+  tbodyListaContatos.innerHTML = '';
 
   contatos.forEach((contato, indice) => {
-    const trContato = document.createElement('tr');
-
-    const tdContato = document.createElement('td');
     const valorFormatado = formatar(contato.valor, contato.nomeTipoContato);
-    tdContato.innerText = `${valorFormatado} (${contato.nomeTipoContato})`;
-    trContato.appendChild(tdContato);
+    const trContato = `
+      <tr> 
+        <td>
+        ${contato.nomeTipoContato}
+        </td> 
+        <td>
+          ${valorFormatado}
+        </td> 
+        <td> 
+          <button 
+            class="btn btn-outline-secondary btn-editar-contato" 
+            type="button"
+            data-indice="${indice}"
+            data-valor="${contato.valor}"
+            data-codigo-tipo-contato="${contato.codigoTipoContato}">
+              Alterar
+          </button>
+        </td>
+        <td> 
+          <button 
+            class="btn btn-outline-danger btn-excluir-contato" 
+            type="button"
+            data-indice="${indice}"
+            data-valor="${contato.valor}"
+            data-tipo-contato="${contato.nomeTipoContato}">
+              Excluir
+          </button>
+        </td>
+      </tr>`;
+    tbodyListaContatos.innerHTML += trContato;
+  });
 
-    const tdAcao = document.createElement('td');
-    const iExcluir = document.createElement('i');
-    iExcluir.classList.add('fa');
-    iExcluir.classList.add('fa-times');
-    iExcluir.addEventListener('click', () => {
-      contatos = contatos.filter((_, i) => i !== indice);
+  recarregarEventos();
+}
+
+function recarregarEventos() {
+  const listaBtnEditarContato = document.querySelectorAll(
+    '.btn-editar-contato'
+  );
+  const listaBtnExcluirContato = document.querySelectorAll(
+    '.btn-excluir-contato'
+  );
+
+  listaBtnEditarContato.forEach((btnEditarContato) => {
+    const indice = Number(btnEditarContato.getAttribute('data-indice'));
+    const valor = btnEditarContato.getAttribute('data-valor');
+    const codigoTipoContato = btnEditarContato.getAttribute(
+      'data-codigo-tipo-contato'
+    );
+
+    btnEditarContato.addEventListener('click', () => {
+      if (contatoEditando) {
+        contatos.push(contatoEditando);
+        contatoEditando = null;
+      }
+
+      contatos = contatos.filter((contato, i) => {
+        if (i === indice) {
+          contatoEditando = contato;
+          console.log(contatoEditando);
+          return false;
+        }
+
+        return true;
+      });
       renderizarListaContatos();
+      selectTipoContato.value = codigoTipoContato;
+      inputValorContato.value = valor;
     });
-    tdAcao.appendChild(iExcluir);
-    trContato.appendChild(tdAcao);
+  });
 
-    tableListaContatos.appendChild(trContato);
+  listaBtnExcluirContato.forEach((btnExcluirContato) => {
+    const indice = Number(btnExcluirContato.getAttribute('data-indice'));
+    const valor = btnExcluirContato.getAttribute('data-valor');
+    const tipoContato = btnExcluirContato.getAttribute('data-tipo-contato');
+
+    const valorFormatado = formatar(valor, tipoContato);
+
+    btnExcluirContato.addEventListener('click', () => {
+      if (
+        confirm(
+          `Deseja excluir este contato?\n${valorFormatado} (${tipoContato})`
+        )
+      ) {
+        contatos = contatos.filter((_, i) => i !== indice);
+        renderizarListaContatos();
+      }
+    });
   });
 }
 
-document.querySelector('.btn-salvar').addEventListener('click', async (e) => {
-  e.preventDefault();
+function recuperarPessoaCampos() {
   const pessoa = {};
-  pessoa.nome = document.querySelector('.nome-pessoa').value;
+  pessoa.nome = inputNomePessoa.value.trim();
+
+  selectTipoContato.value = 0;
+  inputValorContato.value = '';
+
+  if (contatoEditando) {
+    contatos.push(contatoEditando);
+    contatoEditando = null;
+    renderizarListaContatos();
+  }
+
   pessoa.listaContatos = contatos.map((contato) => {
     return {
       codigoTipoContato: contato.codigoTipoContato,
       valor: contato.valor,
     };
   });
+  return pessoa;
+}
 
+function validarPessoa(pessoa) {
   if (pessoa.nome.length < 3 || pessoa.nome.length > 100) {
-    return alert('O nome da pessoa deve ter de 3 até 100 caracteres');
+    return 'O nome da pessoa deve ter de 3 até 100 caracteres';
+  }
+  return '';
+}
+
+btnCadastrar.addEventListener('click', async ({ target }) => {
+  const loadingBotao = createLoading(target);
+  loadingBotao.habilitar('Salvando...');
+
+  const pessoa = recuperarPessoaCampos();
+
+  const mensagemErro = validarPessoa(pessoa);
+  if (mensagemErro) {
+    loadingBotao.desabilitar();
+    return await exibirMensagemErro(mensagemErro);
   }
 
+  await cadastrarPessoa(pessoa);
+  loadingBotao.desabilitar();
+});
+
+btnEditar.addEventListener('click', async ({ target }) => {
+  const loadingBotao = createLoading(target);
+  loadingBotao.habilitar('Salvando...');
+
+  const pessoa = recuperarPessoaCampos();
+
+  const mensagemErro = validarPessoa(pessoa);
+  if (mensagemErro) {
+    loadingBotao.desabilitar();
+    return await exibirMensagemErro(mensagemErro);
+  }
+
+  await editarPessoa(codigoPessoa, pessoa);
+  loadingBotao.desabilitar();
+});
+
+async function cadastrarPessoa(pessoa) {
   const retorno = await createApi('pessoas').post(pessoa);
 
-  if(retorno.data){
-      alert('Pessoa cadastrada com sucesso');
-      location.reload();
-      return; 
+  if (retorno.data) {
+    await exibirMensagemSucesso('Pessoa cadastrada com sucesso');
+    window.open('listar-pessoas.html', '_self');
+    return;
   }
 
-  if(retorno.erro){
-    return alert(retorno.erro);
+  if (retorno.erro) {
+    return await exibirMensagemErro(retorno.erro);
   }
 
-  return alert('Ocorreu um erro ao cadastrar pessoa');
-});
+  return await exibirMensagemErro('Ocorreu um erro ao cadastrar pessoa');
+}
+
+async function editarPessoa(codigoPessoa, pessoa) {
+  const retorno = await createApi('pessoas').put(codigoPessoa, pessoa);
+
+  if (retorno.data) {
+    await exibirMensagemSucesso('Pessoa alterada com sucesso');
+    window.open('listar-pessoas.html', '_self');
+    return;
+  }
+
+  if (retorno.erro) {
+    return await exibirMensagemErro(retorno.erro);
+  }
+
+  return await exibirMensagemErro('Ocorreu um erro ao alterar pessoa');
+}

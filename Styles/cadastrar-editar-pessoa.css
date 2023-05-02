@@ -1,0 +1,24 @@
+.table-contatos td {
+    padding: 6px !important;
+  }
+  
+  .table-contatos select,
+  .table-contatos input {
+    appearance: none;
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    font-size: 16px;
+    padding: 6px 12px;
+    width: 100%;
+  }
+  
+  .table-contatos select:focus,
+  .table-contatos input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 0, 255, 0.3);
+  }
+  
+  .table-contatos button {
+    width: 100%;
+  }

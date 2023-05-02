@@ -1,0 +1,9 @@
+.lista-contatos {
+  list-style: none;
+}
+
+.lista-contatos a {
+  width: 100%;
+  text-decoration: none;
+  color: inherit;
+}

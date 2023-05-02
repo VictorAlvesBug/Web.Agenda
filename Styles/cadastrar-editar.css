@@ -1,0 +1,40 @@
+.modo-cadastrar,
+.modo-editar {
+  display: none;
+}
+
+.modo-cadastrar,
+.modo-editar {
+  display: none;
+}
+
+.modo-cadastrar.visivel,
+.modo-editar.visivel {
+  display: block;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-container > .form-centralizado {
+  width: clamp(700px, 40%, 1000px);
+  padding: 15px 20px;
+  background-color: #ddd;
+  border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -o-border-radius: 10px;
+}
+
+.form-centralizado .form-titulo {
+  margin: 0 auto 15px auto;
+}
+
+.form-footer button {
+  width: 100%;
+}

@@ -2,8 +2,7 @@
 <html lang="pt-br">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Agenda | Pessoa</title>
+    <title>Agenda | Tipos de Contato</title>
 
     <!---------- Externo ---------->
     <!-- CSS Bootstrap -->
@@ -26,11 +25,10 @@
     <!-- CSS Local -->
     <link rel="stylesheet" href="../Styles/geral.css" />
     <link rel="stylesheet" href="../Styles/cadastrar-editar.css" />
-    <link rel="stylesheet" href="../Styles/cadastrar-editar-pessoa.css" />
     <!-- JS Local -->
     <script
       type="module"
-      src="../Scripts/cadastrar-editar-pessoa.js"
+      src="../Scripts/cadastrar-editar-tipo-contato.js"
       defer
     ></script>
     <!----------------------------->
@@ -51,7 +49,7 @@
     <main>
       <div class="main-header">
         <div class="bread-crumb">
-          <a href="listar-pessoas.html">Pessoas</a>
+          <a href="listar-tipos-contato.html">Tipos de Contato</a>
           <a class="modo-cadastrar visivel">Cadastrar</a>
           <a class="modo-editar">Alterar</a>
         </div>
@@ -59,52 +57,28 @@
 
       <div class="form-container">
         <form class="form-centralizado">
-          <h3 class="form-titulo modo-cadastrar visivel">Cadastrar Pessoa</h3>
-          <h3 class="form-titulo modo-editar">Alterar Pessoa</h3>
+          <h3 class="form-titulo modo-cadastrar visivel">
+            Cadastrar Tipo de Contato
+          </h3>
+          <h3 class="form-titulo modo-editar">Alterar Tipo de Contato</h3>
           <div class="form-group">
             <label for="nome">Nome</label>
             <input
               type="text"
-              class="form-control nome-pessoa"
+              class="form-control nome"
               id="nome"
               name="nome"
             />
           </div>
-          <table class="table table-contatos">
-            <thead>
-              <tr>
-                <td>Tipo de Contato</td>
-                <td>Valor</td>
-                <td colspan="2"></td>
-              </tr>
-            </thead>
-            <tbody class="lista-contatos"></tbody>
-            <tfoot>
-              <tr>
-                <td>
-                  <select
-                    class="select-tipo-contato"
-                    aria-label="Tipo de contato"
-                  ></select>
-                </td>
-                <td>
-                  <input
-                    type="text"
-                    class="valor-contato"
-                    placeholder="Valor do contato"
-                  />
-                </td>
-                <td colspan="2">
-                  <button
-                    class="btn btn-outline-primary btn-cadastrar-contato"
-                    type="button"
-                  >
-                    Adicionar
-                  </button>
-                </td>
-              </tr>
-            </tfoot>
-          </table>
+          <div class="form-group">
+            <label for="regex">Regex de Validação (opcional)</label>
+            <input
+              type="text"
+              class="form-control regex-validacao"
+              id="regex"
+              name="regex"
+            />
+          </div>
           <div class="form-footer">
             <button
               type="button"

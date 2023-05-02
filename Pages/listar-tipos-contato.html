@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Agenda | Tipos de Contato</title>
+
+    <!---------- Externo ---------->
+    <!-- CSS Bootstrap -->
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <!-- JS JQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- JS Bootstrap -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- JS FontAwesome -->
+    <script
+      src="https://kit.fontawesome.com/1e2e684622.js"
+      crossorigin="anonymous"
+    ></script>
+    <!----------------------------->
+
+    <!---------- Interno ---------->
+    <!-- CSS Local -->
+    <link rel="stylesheet" href="../Styles/geral.css" />
+    <link rel="stylesheet" href="../Styles/listar.css" />
+    <!-- JS Local -->
+    <script
+      type="module"
+      src="../Scripts/listar-tipos-contato.js"
+      defer
+    ></script>
+    <!----------------------------->
+  </head>
+  <body>
+    <div class="lista-alert-flutuante"></div>
+
+    <header>
+      <h1>Agenda</h1>
+      <nav>
+        <a class="btn btn-light" href="listar-pessoas.html"> Pessoas </a>
+        <a class="btn btn-light" href="listar-tipos-contato.html">
+          Tipos de Contato
+        </a>
+      </nav>
+    </header>
+
+    <main>
+      <div class="main-header">
+        <div class="bread-crumb">
+          <a>Tipos de Contato</a>
+        </div>
+        <button
+          class="btn btn-primary"
+          onclick="window.open('cadastrar-editar-tipo-contato.html', '_self')"
+        >
+          Cadastrar Tipo de Contato
+        </button>
+      </div>
+      <div id="tipos-contato" class="lista-card"></div>
+    </main>
+  </body>
+</html>
