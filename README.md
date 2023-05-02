@@ -32,4 +32,8 @@ git clone https://github.com/VictorAlvesBug/Web.Agenda.git
 
 Abra o projeto **Api.Agenda** no **Visual Studio** e pressione **IIS Express**.
 
-Abra a tela **Web.Agenda** > **Pages** > **listar-pessoas.html**.
+Abra a tela **Web.Agenda** no **Visual Studio Code** e instale o prugin 
+**Live Server**.
+
+Clique com o botão direito no arquivo **Pages** > **listar-pessoas.html** e 
+clique na opção **Abrir com Live Server**.
