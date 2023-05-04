@@ -19,7 +19,7 @@ pois os valores das variáveis de ambiente são recuperados apenas no ato de abr
 o **Visual Studio**.
 
 Execute o 
-[Script SQL](https://github.com/VictorAlvesBug/Api.Agenda/blob/master/Script%20de%20Cria%C3%A7%C3%A3o%20das%20Tabelas.sql) 
+[Script SQL](https://github.com/VictorAlvesBug/Api.Agenda/blob/master/Script%20MySql.sql) 
 de criação de **banco**, **tabelas** e inserção dos **dados iniciais** de 
 algumas tabelas.
 
