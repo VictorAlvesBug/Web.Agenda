@@ -7,11 +7,12 @@ Sua proposta é gerenciar **Pessoas**, **Contatos** e **Tipos de Contato** de um
 ## Configurando o projeto
 
 Primeiramente, configure as seguintes variáveis de ambiente, conforme o servidor 
-SQL Server que deseja utilizar, em **Windows** > **Variáveis de Ambiente** > 
+MySQL que deseja utilizar, em **Windows** > **Variáveis de Ambiente** > 
 **Variáveis de Ambiente...**:
-- **DB_ADDRESS**: IP do servidor de banco;
-- **DB_USER_ID**: Usuário de login do banco, caso seja diferente de **sa**;
-- **DB_PASSWORD**: Senha de login do banco;
+- **MYSQL_ADDRESS**: Endereço do servidor de banco;
+- **MYSQL_PORT**: Porta de acesso;
+- **MYSQL_USER**: Usuário de login do banco;
+- **MYSQL_PASSWORD**: Senha de login do banco;
 
 **OBS.:** Caso seja necessário alterar o valor destas variáveis enquanto o 
 projeto estiver **aberto no Visual Studio**, será necessário **reiniciar a IDE**, 
